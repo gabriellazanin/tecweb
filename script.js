@@ -5,31 +5,51 @@ function loadMenuAndCheckCookies() {
   const acceptCookiesBtn = document.getElementById('accept-cookies-btn');
 
   acceptCookiesBtn.addEventListener('click', function() {
-    // Definir um cookie para indicar que o usuário aceitou os cookies
-    document.cookie = 'cookieConsent=accepted; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
-    
-    // Ocultar o banner de consentimento de cookies
-    cookieBanner.style.display = 'none';
+      // Definir um cookie para indicar que o usuário aceitou os cookies
+      document.cookie = 'cookieConsent=accepted; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
+      
+      // Enviar os cookies para o servidor PHP
+      sendCookiesToServer();
+      
+      // Ocultar o banner de consentimento de cookies
+      cookieBanner.style.display = 'none';
   });
 
   if (!document.cookie.includes('cookieConsent=accepted')) {
-    // Se o cookie de consentimento não foi encontrado, exibir o banner de consentimento
-    cookieBanner.style.display = 'block';
+      // Se o cookie de consentimento não foi encontrado, exibir o banner de consentimento
+      cookieBanner.style.display = 'block';
   }
 
   // Carregar o menu usando AJAX
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status === 200) {
-        document.getElementById('menu').innerHTML = xhr.responseText;
-      } else {
-        console.error('Erro ao carregar o menu: ' + xhr.status);
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+              document.getElementById('menu').innerHTML = xhr.responseText;
+          } else {
+              console.error('Erro ao carregar o menu: ' + xhr.status);
+          }
       }
-    }
   };
   xhr.open('GET', 'menu.php', true);
   xhr.send();
+}
+
+// Função para enviar os cookies para o servidor PHP
+function sendCookiesToServer() {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+              console.log('Cookies enviados com sucesso para o servidor PHP.');
+          } else {
+              console.error('Erro ao enviar cookies para o servidor PHP: ' + xhr.status);
+          }
+      }
+  };
+  xhr.open('POST', 'save_cookies.php', true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.send('cookies=' + encodeURIComponent(document.cookie));
 }
 
 // Carregar o menu, verificar os cookies e inicializar o carrossel de fotos ao carregar a página
@@ -43,12 +63,12 @@ window.onload = function() {
   const nextButton = document.getElementById("slide-arrow-next");
 
   nextButton.addEventListener("click", () => {
-    const slideWidth = slide.clientWidth;
-    slidesContainer.scrollLeft += slideWidth;
+      const slideWidth = slide.clientWidth;
+      slidesContainer.scrollLeft += slideWidth;
   });
 
   prevButton.addEventListener("click", () => {
-    const slideWidth = slide.clientWidth;
-    slidesContainer.scrollLeft -= slideWidth;
+      const slideWidth = slide.clientWidth;
+      slidesContainer.scrollLeft -= slideWidth;
   });
 };
