@@ -28,4 +28,4 @@ function buildMenu($items) {
 }
 
 echo buildMenu($menuItems);
-
+?>
